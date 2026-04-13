@@ -376,25 +376,26 @@ body { background:var(--bg2); color:var(--text); font-family:'Noto Serif JP',ser
 .col-dot.active{background:var(--p1);transform:scale(1.35);}
 
 /* ============================================================  お知らせバナー  */
-.hero-news-bar{display:flex;align-items:baseline;justify-content:flex-start;gap:10px;background:rgba(255,255,255,.93);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:10px 24px;position:sticky;top:64px;z-index:98;flex-wrap:wrap;width:100%;box-sizing:border-box;overflow:hidden;}
+.hero-news-bar{display:flex;align-items:center;justify-content:flex-start;gap:10px;background:rgba(255,255,255,.93);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:10px 24px;position:sticky;top:64px;z-index:98;width:100%;box-sizing:border-box;overflow:hidden;}
+.hero-news-bar.clickable{cursor:pointer;}
 .hero-news-bar.banner-closed{background:#fce7f3;border-bottom:1px solid #f9a8d4;}
 .hero-news-bar.banner-closed .hero-news-text{color:#831843;}
-.hero-news-bar.banner-closed .hero-news-date{color:#9d174d;}
-/* バナーローテーション用ドット */
-.banner-dots{display:flex;gap:5px;align-items:center;margin-left:auto;flex-shrink:0;}
+/* プログレスバー */
+.banner-progress-wrap{position:absolute;bottom:0;left:0;right:0;height:2px;background:rgba(139,92,246,.1);}
+.banner-progress-bar{height:100%;background:var(--p2);border-radius:0 2px 2px 0;}
+/* ドット */
+.banner-dots{display:flex;gap:5px;align-items:center;flex-shrink:0;margin-left:auto;}
 .banner-dot{width:5px;height:5px;border-radius:50%;background:rgba(139,92,246,.25);border:none;padding:0;cursor:default;transition:background .3s,transform .3s;}
 .banner-dot.active{background:var(--p1);transform:scale(1.35);}
 .hero-news-badge{font-size:10px;font-family:'Noto Serif JP',serif;letter-spacing:1px;padding:2px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;}
-.hero-news-inner{display:flex;align-items:baseline;gap:10px;flex:1;min-width:0;flex-wrap:wrap;}
-.hero-news-inner .hero-news-text{flex:1;min-width:0;}
+.hero-news-inner{display:flex;align-items:center;gap:10px;flex:1;min-width:0;}
 .hero-news-text{font-size:12px;font-weight:300;color:var(--text);white-space:normal;overflow:visible;text-overflow:unset;flex:1;min-width:0;line-height:1.7;}
 @media(max-width:600px){
-  .hero-news-bar{padding:8px 16px;gap:4px 8px;align-items:flex-start;flex-direction:column;}
-  .hero-news-inner{flex-direction:column;gap:4px;width:100%;}
-  .hero-news-meta{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;}
+  .hero-news-bar{padding:8px 16px;align-items:flex-start;flex-direction:column;gap:3px;}
+  .hero-news-inner{flex-direction:column;gap:3px;width:100%;}
+  .hero-news-meta{display:flex;align-items:center;gap:8px;width:100%;}
   .hero-news-badge{flex-shrink:0;}
-  .hero-news-date-mobile{font-size:10px;color:var(--muted);white-space:nowrap;font-family:'Noto Serif JP',serif;font-weight:300;}
-  .hero-news-text{white-space:normal;text-overflow:unset;overflow:visible;font-size:11px;text-align:left;width:100%;padding-left:2px;line-height:1.7;}
+  .hero-news-text{font-size:11px;text-align:left;width:100%;padding-left:2px;line-height:1.7;}
   .banner-dots{margin-left:auto;}
 }
 
@@ -710,6 +711,9 @@ footer{position:relative;z-index:2;border-top:1px solid var(--border);padding:24
     <span class="hero-news-text" id="heroNewsText"></span>
   </div>
   <span class="banner-dots" id="bannerDots" style="display:none;"></span>
+  <div class="banner-progress-wrap" id="bannerProgressWrap" style="display:none;">
+    <div class="banner-progress-bar" id="bannerProgressBar" style="width:0%;"></div>
+  </div>
 </div>
 
 <!-- HERO -->
@@ -1229,6 +1233,7 @@ function toggleNewsItem(el) {
 
 /* ================================================================
    ヒーローバナー表示（スプレッドシート連動・複数ローテーション対応）
+   タップで手動送り・プログレスバー・ドット表示
    ================================================================ */
 const BADGE_LABELS_BANNER = {
   "badge-info":    "📢 お知らせ",
@@ -1238,17 +1243,19 @@ const BADGE_LABELS_BANNER = {
   "non":           ""
 };
 
-let _bannerItems   = [];
-let _bannerIndex   = 0;
-let _bannerTimer   = null;
+let _bannerItems  = [];
+let _bannerIndex  = 0;
+let _bannerRaf    = null;
+let _bannerStart  = 0;
 const BANNER_INTERVAL = 5000;
 
 function renderHeroBanner(bannerItems) {
-  const banner   = document.getElementById("heroNewsBanner");
-  const dotsWrap = document.getElementById("bannerDots");
+  const banner      = document.getElementById("heroNewsBanner");
+  const dotsWrap    = document.getElementById("bannerDots");
+  const progWrap    = document.getElementById("bannerProgressWrap");
+  const progBar     = document.getElementById("bannerProgressBar");
   if (!banner) return;
 
-  // null / 空配列 → バナーを非表示
   if (!bannerItems || bannerItems.length === 0) {
     banner.style.display = "none";
     updateScrollMargins();
@@ -1259,28 +1266,46 @@ function renderHeroBanner(bannerItems) {
   _bannerIndex = 0;
   banner.style.display = "flex";
 
-  // ドット生成（2件以上のときのみ表示）
+  // 複数件のときのみドット・バー・タップを有効化
+  const multi = _bannerItems.length >= 2;
+
   dotsWrap.innerHTML = "";
-  if (_bannerItems.length >= 2) {
+  if (multi) {
     dotsWrap.style.display = "flex";
     _bannerItems.forEach((_, i) => {
       const d = document.createElement("span");
       d.className = "banner-dot" + (i === 0 ? " active" : "");
       dotsWrap.appendChild(d);
     });
+    progWrap.style.display = "block";
+    banner.classList.add("clickable");
+    banner.onclick = () => {
+      _bannerIndex = (_bannerIndex + 1) % _bannerItems.length;
+      _showBannerItem(_bannerIndex);
+    };
   } else {
     dotsWrap.style.display = "none";
+    progWrap.style.display = "none";
+    banner.classList.remove("clickable");
+    banner.onclick = null;
   }
 
   _showBannerItem(0);
 
-  // 2件以上ならローテーション開始
-  if (_bannerItems.length >= 2) {
-    clearInterval(_bannerTimer);
-    _bannerTimer = setInterval(() => {
-      _bannerIndex = (_bannerIndex + 1) % _bannerItems.length;
-      _showBannerItem(_bannerIndex);
-    }, BANNER_INTERVAL);
+  // プログレスバーアニメーション（複数件のみ）
+  if (_bannerRaf) cancelAnimationFrame(_bannerRaf);
+  if (multi) {
+    _bannerStart = performance.now();
+    (function tick(now) {
+      const elapsed = now - _bannerStart;
+      const pct = Math.min(elapsed / BANNER_INTERVAL * 100, 100);
+      progBar.style.width = pct + "%";
+      if (pct >= 100) {
+        _bannerIndex = (_bannerIndex + 1) % _bannerItems.length;
+        _showBannerItem(_bannerIndex);
+      }
+      _bannerRaf = requestAnimationFrame(tick);
+    })(performance.now());
   }
 
   updateScrollMargins();
@@ -1291,18 +1316,22 @@ function _showBannerItem(idx) {
   const badge    = document.getElementById("heroNewsBadge");
   const text     = document.getElementById("heroNewsText");
   const dotsWrap = document.getElementById("bannerDots");
+  const progBar  = document.getElementById("bannerProgressBar");
   const item     = _bannerItems[idx];
   if (!item) return;
 
-  // フェードアウト → 内容更新 → フェードイン
+  _bannerStart = performance.now();
+  if (progBar) progBar.style.width = "0%";
+
   banner.style.opacity = "0";
-  banner.style.transition = "opacity 0.4s ease";
+  banner.style.transition = "opacity 0.35s ease";
 
   setTimeout(() => {
     const isMobile = window.innerWidth <= 600;
+
     if (item.badge && item.badge !== "") {
-      badge.textContent   = BADGE_LABELS_BANNER[item.badge] || "";
-      badge.className     = "hero-news-badge " + item.badge;
+      badge.textContent = BADGE_LABELS_BANNER[item.badge] || "";
+      badge.className   = "hero-news-badge " + item.badge;
       badge.style.display = "";
     } else {
       badge.style.display = "none";
@@ -1310,28 +1339,36 @@ function _showBannerItem(idx) {
     banner.classList.toggle("banner-closed", item.badge === "badge-closed");
 
     if (isMobile) {
-      const dateStr = item.date ? item.date : "";
       const inner = banner.querySelector(".hero-news-inner");
       inner.innerHTML = `
         <div class="hero-news-meta">
-          <span class="hero-news-badge ${item.badge || ""}" style="${(!item.badge || item.badge==='') ? 'display:none;' : ''}">${BADGE_LABELS_BANNER[item.badge] || ""}</span>
-          ${dateStr ? `<span style="font-size:10px;color:var(--muted);white-space:nowrap;font-family:'Noto Serif JP',serif;font-weight:300;">${dateStr}</span>` : ""}
+          <span class="hero-news-badge ${item.badge || ""}" style="${(!item.badge || item.badge === '') ? 'display:none;' : ''}">${BADGE_LABELS_BANNER[item.badge] || ""}</span>
+          ${item.date ? `<span style="font-size:10px;color:var(--muted);white-space:nowrap;font-family:'Noto Serif JP',serif;font-weight:300;">${esc(item.date)}</span>` : ""}
+          <span id="bannerDots" style="display:${_bannerItems.length >= 2 ? 'flex' : 'none'};gap:5px;align-items:center;margin-left:auto;"></span>
         </div>
         <span class="hero-news-text">${item.title ? esc(item.title) : esc(item.text || "")}</span>
       `;
+      // スマホのドットを再生成
+      const spDots = inner.querySelector("#bannerDots");
+      if (spDots && _bannerItems.length >= 2) {
+        _bannerItems.forEach((_, i) => {
+          const d = document.createElement("span");
+          d.className = "banner-dot" + (i === idx ? " active" : "");
+          spDots.appendChild(d);
+        });
+      }
     } else {
       text.textContent = (item.date ? item.date + "　" : "") + (item.title || item.text || "");
-    }
-
-    // ドットのactive更新
-    if (dotsWrap) {
-      Array.from(dotsWrap.children).forEach((d, i) => {
-        d.classList.toggle("active", i === idx);
-      });
+      // PCドット更新
+      if (dotsWrap) {
+        Array.from(dotsWrap.children).forEach((d, i) => {
+          d.classList.toggle("active", i === idx);
+        });
+      }
     }
 
     banner.style.opacity = "1";
-  }, 200);
+  }, 180);
 }
 
 
