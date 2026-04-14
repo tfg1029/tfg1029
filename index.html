@@ -295,14 +295,14 @@ body { background:var(--bg2); color:var(--text); font-family:'Noto Serif JP',ser
 .news-item.has-body .news-item-header:hover{background:var(--bg);}
 .news-badge{display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-family:'Noto Serif JP',serif;letter-spacing:1px;padding:3px 10px;border-radius:20px;white-space:nowrap;width:88px;flex-shrink:0;}
 .badge-info{background:#fff7ed;color:#92400e;} .badge-holiday{background:#d1fae5;color:#065f46;} .badge-new{background:#fefce8;color:#854d0e;} .badge-closed{background:#be185d;color:white;}
-.news-date{font-family:'Noto Serif JP',serif;font-size:11px;color:var(--muted);letter-spacing:1px;white-space:nowrap;flex-shrink:0;font-weight:300;width:90px;}
+/* .news-date は投稿日Web非表示化(index110)により削除 */
 .news-body{flex:1;min-width:0;}
 .news-body-inner{display:flex;align-items:center;gap:6px;}
 .news-title-text{flex:1;min-width:0;font-size:13px;color:var(--text);line-height:1.8;font-weight:400;}
 .news-chevron{font-size:10px;color:var(--muted);flex-shrink:0;transition:transform .3s;user-select:none;padding:2px 4px;}
 .news-item.open .news-chevron{transform:rotate(180deg);}
-.news-detail{overflow:hidden;max-height:0;transition:max-height .35s ease,padding .35s ease;padding:0 28px 0 calc(88px + 90px + 28px + 28px);}
-.news-item.open .news-detail{max-height:400px;padding:0 28px 14px calc(88px + 90px + 28px + 28px);}
+.news-detail{overflow:hidden;max-height:0;transition:max-height .35s ease,padding .35s ease;padding:0 28px 0 calc(88px + 28px + 28px + 1em);}
+.news-item.open .news-detail{max-height:400px;padding:0 28px 14px calc(88px + 28px + 28px + 1em);}
 .news-text{display:block;font-size:13px;color:var(--mid);line-height:1.9;font-weight:300;border-left:2px solid var(--p3);padding-left:14px;}
 .news-img{margin-top:10px;max-width:100%;max-height:280px;border-radius:12px;object-fit:cover;display:block;}
 .empty-news{padding:32px;text-align:center;color:var(--muted);font-size:13px;font-family:'Cormorant Garamond',serif;font-style:italic;letter-spacing:1px;}
