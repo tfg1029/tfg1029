@@ -293,8 +293,9 @@ body { background:var(--bg2); color:var(--text); font-family:'Noto Serif JP',ser
 .news-item-header{display:flex;align-items:center;gap:14px;padding:16px 28px;cursor:default;}
 .news-item.has-body .news-item-header{cursor:pointer;}
 .news-item.has-body .news-item-header:hover{background:var(--bg);}
-.news-badge{display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-family:'Noto Serif JP',serif;letter-spacing:1px;padding:3px 10px;border-radius:20px;white-space:nowrap;width:88px;flex-shrink:0;}
-.badge-info{background:#fff7ed;color:#92400e;} .badge-holiday{background:#d1fae5;color:#065f46;} .badge-new{background:#ede9fe;color:#4c1d95;} .badge-closed{background:#fff1f2;color:#be123c;}
+.news-badge{display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-family:'Noto Serif JP',serif;letter-spacing:1px;padding:3px 0;border-radius:20px;white-space:nowrap;width:88px;flex-shrink:0;}
+.news-item:has(.badge-closed){background:#fff1f2;border-left:3px solid #be123c;border-radius:0;}
+.badge-info{background:#fff7ed;color:#92400e;} .badge-holiday{background:#d1fae5;color:#065f46;} .badge-new{background:#ede9fe;color:#4c1d95;} .badge-closed{background:#fff1f2;color:#be123c;} .badge-gem{background:#e0f2fe;color:#075985;}
 /* .news-date は投稿日Web非表示化(index110)により削除 */
 .news-body{flex:1;min-width:0;}
 .news-body-inner{display:flex;align-items:center;gap:6px;}
@@ -397,7 +398,7 @@ body { background:var(--bg2); color:var(--text); font-family:'Noto Serif JP',ser
 .banner-dot{width:5px;height:5px;border-radius:50%;background:rgba(139,92,246,.25);border:none;padding:0;cursor:default;transition:background .3s,transform .3s;}
 .banner-dot.active{background:var(--p1);transform:scale(1.35);}
 /* バッジ余白6px */
-.hero-news-badge{font-size:10px;font-family:'Noto Serif JP',serif;letter-spacing:1px;padding:2px 6px;border-radius:20px;white-space:nowrap;flex-shrink:0;}
+.hero-news-badge{font-size:10px;font-family:'Noto Serif JP',serif;letter-spacing:1px;padding:1px 6px;border-radius:20px;white-space:nowrap;flex-shrink:0;}
 /* inner：常に横並び */
 .hero-news-inner{display:flex;align-items:center;gap:8px;flex:1;min-width:0;}
 /* テキスト1行省略 */
@@ -1112,9 +1113,10 @@ const DEFAULT_NEWS = [
 
 const BADGE_LABELS = {
   "badge-info":    "📢 お知らせ",
-  "badge-new":     "🌟 新商品入荷",
+  "badge-new":     "🌟 新商品",
   "badge-holiday": "🍀 定休日",
-  "badge-closed":  "⚠️ 臨時休業"
+  "badge-closed":  "🔔 臨時休業",
+  "badge-gem":     "💎 誕生石"
 };
 
 let newsList = [];
@@ -1157,7 +1159,7 @@ function formatDate(dateStr) {
 }
 
 /* ---------- ページ描画 ---------- */
-const INITIAL_COUNT = 5;
+const INITIAL_COUNT = 3;
 
 function renderNewsList() {
   const el      = document.getElementById("news-list");
@@ -1175,7 +1177,7 @@ function renderNewsList() {
   }
 
   const visible = newsList.slice(0, INITIAL_COUNT);
-  el.innerHTML = visible.map(item => newsItemHTML(item)).join("");
+  el.innerHTML = visible.map((item, i) => newsItemHTML(item, i)).join("");
 
   // 4件以上あればボタン表示
   if (moreWrap && moreBtn) {
@@ -1189,15 +1191,26 @@ function renderNewsList() {
   }
 }
 
-function showAllNews() {
+function showAllNews(targetIdx) {
   const el      = document.getElementById("news-list");
   const moreWrap = document.getElementById("news-more-wrap");
   if (!el) return;
-  el.innerHTML = newsList.map(item => newsItemHTML(item)).join("");
+  el.innerHTML = newsList.map((item, i) => newsItemHTML(item, i)).join("");
   if (moreWrap) moreWrap.style.display = "none";
+  if (targetIdx !== undefined) {
+    setTimeout(() => {
+      const target = el.querySelector(`[data-news-idx="${targetIdx}"]`);
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth", block: "center" });
+        target.style.transition = "box-shadow 0.3s";
+        target.style.boxShadow = "0 0 0 2px #be123c";
+        setTimeout(() => { target.style.boxShadow = ""; }, 1800);
+      }
+    }, 100);
+  }
 }
 
-function newsItemHTML(item) {
+function newsItemHTML(item, idx) {
   const title   = item.title ? esc(item.title) : "";
   const hasText = !!(item.text && String(item.text).trim());
   const text    = hasText
@@ -1231,7 +1244,7 @@ function newsItemHTML(item) {
   const hasBodyClass = (title && hasText) ? " has-body" : "";
 
   return `
-    <div class="news-item${hasBodyClass}"${title && hasText ? ' onclick="toggleNewsItem(this)"' : ""}>
+    <div class="news-item${hasBodyClass}" data-news-idx="${idx !== undefined ? idx : ''}"${title && hasText ? ' onclick="toggleNewsItem(this)"' : ""}>
       <div class="news-item-header">
         ${item.badge && item.badge !== "non"
           ? `<span class="news-badge ${item.badge}">${BADGE_LABELS[item.badge] || ""}</span>`
@@ -1254,9 +1267,10 @@ function toggleNewsItem(el) {
    ================================================================ */
 const BADGE_LABELS_BANNER = {
   "badge-info":    "📢 お知らせ",
-  "badge-new":     "🌟 新着",
+  "badge-new":     "🌟 新商品",
   "badge-holiday": "🍀 定休日",
-  "badge-closed":  "⚠️ 臨時休業",
+  "badge-closed":  "🔔 臨時休業",
+  "badge-gem":     "💎 誕生石",
   "non":           ""
 };
 
@@ -1283,10 +1297,27 @@ function renderHeroBanner(bannerItems) {
   _bannerIndex = 0;
   banner.style.display = "flex";
 
-  // バナー全体タップ → お知らせセクションへジャンプ（常時）
+  // バナー全体タップ → 当該記事へジャンプ
   banner.onclick = () => {
-    const target = document.getElementById("news-section");
-    if (target) target.scrollIntoView({ behavior: "smooth" });
+    const item = _bannerItems[_bannerIndex];
+    const newsSection = document.getElementById("news-section");
+    if (newsSection) newsSection.scrollIntoView({ behavior: "smooth" });
+    if (!item) return;
+    const idx = newsList.findIndex(n => n.title === item.title && n.date === item.date);
+    if (idx === -1) return;
+    if (idx < INITIAL_COUNT) {
+      setTimeout(() => {
+        const el = document.querySelector(`[data-news-idx="${idx}"]`);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+          el.style.transition = "box-shadow 0.3s";
+          el.style.boxShadow = "0 0 0 2px #be123c";
+          setTimeout(() => { el.style.boxShadow = ""; }, 1800);
+        }
+      }, 400);
+    } else {
+      setTimeout(() => { showAllNews(idx); }, 400);
+    }
   };
 
   // 複数件のときのみドット・プログレスバー表示
