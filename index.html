@@ -297,11 +297,11 @@ body { background:var(--bg2); color:var(--text); font-family:'Noto Serif JP',ser
 /* 臨時休業の記事背景（border-leftは削除・目立ちすぎのため） */
 .news-item:has(.badge-closed){background:#fff1f2;border-radius:0;}
 /* 各バッジに枠線追加。臨時休業は濃い赤枠で目立たせ、他は同色系の薄枠で統一 */
-.badge-info   {background:#fff7ed;color:#92400e;border:1px solid rgba(146,64,14,0.25);}
-.badge-holiday{background:#d1fae5;color:#065f46;border:1px solid rgba(6,95,70,0.25);}
-.badge-new    {background:#ede9fe;color:#4c1d95;border:1px solid rgba(76,29,149,0.25);}
-.badge-closed {background:#fff1f2;color:#be123c;border:1px solid #be123c;}
-.badge-gem    {background:#e0f2fe;color:#075985;border:1px solid rgba(7,89,133,0.25);}
+.badge-info   {background:#fff7ed;color:#92400e;border:0.5px solid rgba(146,64,14,0.25);}
+.badge-holiday{background:#d1fae5;color:#065f46;border:0.5px solid rgba(6,95,70,0.25);}
+.badge-new    {background:#ede9fe;color:#4c1d95;border:0.5px solid rgba(76,29,149,0.25);}
+.badge-closed {background:#fff1f2;color:#be123c;border:0.5px solid #be123c;}
+.badge-gem    {background:#e0f2fe;color:#075985;border:0.5px solid rgba(7,89,133,0.25);}
 /* .news-date は投稿日Web非表示化(index110)により削除 */
 .news-body{flex:1;min-width:0;}
 .news-body-inner{display:flex;align-items:center;gap:6px;}
