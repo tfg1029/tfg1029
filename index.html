@@ -70,12 +70,6 @@
       "closes": "18:00"
     }
   ],
-  "specialOpeningHoursSpecification": {
-    "@type": "OpeningHoursSpecification",
-    "description": "最終入店 17:30",
-    "opens": "10:00",
-    "closes": "18:00"
-  },
   "sameAs": [
     "https://www.instagram.com/tfg_kousekino_sumika/",
     "https://ameblo.jp/tfg1029/"
@@ -151,9 +145,11 @@ body { background:var(--bg2); color:var(--text); font-family:'Noto Serif JP',ser
 @keyframes gemPulse{0%,100%{box-shadow:0 4px 16px rgba(139,92,246,.3);}50%{box-shadow:0 6px 28px rgba(139,92,246,.55);}}
 .logo-text{font-family:'Cinzel Decorative',serif;font-size:13px;letter-spacing:2px;color:var(--p1);line-height:1.4;}
 .logo-text small{display:block;font-family:'Noto Serif JP',serif;font-size:9px;letter-spacing:4px;color:var(--muted);font-weight:300;}
-.nav-links{display:flex;gap:2px;list-style:none;flex-wrap:nowrap;}
+.nav-links{display:flex;gap:2px;list-style:none;flex-wrap:nowrap;align-items:center;}
 .nav-links a{font-family:'Cormorant Garamond',serif;font-size:12px;letter-spacing:1.5px;color:var(--muted);text-decoration:none;padding:6px 14px;border-radius:20px;transition:background .2s,color .2s;white-space:nowrap;}
 .nav-links a:hover{background:var(--p4);color:var(--p1);}
+/* ナビボタン間の縦線（最後のliには表示しない） */
+.nav-links li:not(:last-child)::after{content:"";display:inline-block;width:1px;height:12px;background:var(--border);margin-left:2px;vertical-align:middle;}
 
 
 
@@ -288,9 +284,10 @@ body { background:var(--bg2); color:var(--text); font-family:'Noto Serif JP',ser
 .news-more-wrap{padding:12px 28px 20px;text-align:center;}
 .news-more-btn{font-family:'Cormorant Garamond',serif;font-size:13px;letter-spacing:2px;color:var(--p1);background:white;border:1px solid var(--border);border-radius:20px;padding:10px 32px;cursor:pointer;transition:background .2s,box-shadow .2s;}
 .news-more-btn:hover{background:var(--p4);box-shadow:0 4px 12px rgba(139,92,246,.15);}
-.news-item{border-bottom:1px solid rgba(139,92,246,.06);transition:background .2s;}
+.news-item{border-bottom:1px solid rgba(139,92,246,.06);transition:background .2s;cursor:default;}
 .news-item:last-child{border-bottom:none;}
 .news-item-header{display:flex;align-items:center;gap:14px;padding:16px 28px;cursor:default;}
+.news-item.has-body{cursor:pointer;}
 .news-item.has-body .news-item-header{cursor:pointer;}
 .news-item.has-body .news-item-header:hover{background:var(--bg);}
 .news-badge{display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-family:'Noto Serif JP',serif;letter-spacing:1px;padding:3px 0;border-radius:20px;white-space:nowrap;width:88px;flex-shrink:0;}
@@ -410,10 +407,9 @@ body { background:var(--bg2); color:var(--text); font-family:'Noto Serif JP',ser
   /* スマホも横並び固定・縦積みなし */
   .hero-news-inner{flex-direction:row;}
   #heroNewsBadge{display:inline-flex !important;}
-  #bannerDots{display:none !important;}
-  #bannerProgressWrap{display:none !important;}
+  /* スマホはドット・プログレスバー非表示 */
+  #bannerDots,#bannerProgressWrap{display:none !important;}
   .hero-news-text{font-size:11px;}
-  .banner-dots{display:none !important;}
   .hero-news-badge{width:76px;}
 }
 
@@ -444,18 +440,6 @@ body { background:var(--bg2); color:var(--text); font-family:'Noto Serif JP',ser
   .snapwidget-area iframe{ height:360px; }
 }
 
-/* ============================================================  SNS  */
-.sns-section{position:relative;z-index:2;padding:0 48px 56px;}
-.sns-inner{background:linear-gradient(135deg,#ede9fe,#fce7f3);border:1px solid rgba(139,92,246,.15);border-radius:22px;padding:28px 32px;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:20px;text-align:center;}
-.sns-text{font-family:'Cormorant Garamond',serif;font-size:15px;font-style:italic;color:var(--mid);letter-spacing:1px;}
-.sns-btns{display:flex;gap:12px;flex-wrap:wrap;width:100%;justify-content:center;}
-.sns-btn{font-family:'Cormorant Garamond',serif;font-size:14px;letter-spacing:1.5px;padding:14px 0;border-radius:22px;text-decoration:none;cursor:pointer;transition:transform .25s,box-shadow .25s;border:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;width:200px;}
-.sns-btn:hover{transform:translateY(-3px);}
-.sb-ameba{background:white;color:#16a34a;border:1.5px solid #16a34a;}
-.sb-ig{background:white;color:#be185d;border:1.5px solid #be185d;}
-.sb-fb{background:white;color:#1d4ed8;border:1.5px solid #1d4ed8;}
-
-
 /* ============================================================  Q&A  */
 .qna-section{position:relative;z-index:2;padding:0 48px 56px;}
 .qna-frame{background:white;border:1px solid var(--border);border-radius:24px;overflow:hidden;box-shadow:var(--shadow);}
@@ -484,8 +468,10 @@ body { background:var(--bg2); color:var(--text); font-family:'Noto Serif JP',ser
 }
 /* ============================================================  ACCESS  */
 .access-section{position:relative;z-index:2;padding:0 48px 56px;display:grid;grid-template-columns:1fr 1fr;gap:24px;}
-.access-map{background:white;border:1px solid var(--border);border-radius:22px;overflow:hidden;box-shadow:var(--shadow);min-height:220px;position:relative;}
-.access-map iframe{width:140%;height:120%;border:none;min-height:220px;display:block;margin-left:-40%;margin-top:-10%;}
+.access-map{background:white;border:1px solid var(--border);border-radius:22px;overflow:hidden;box-shadow:var(--shadow);min-height:220px;position:relative;display:flex;flex-direction:column;}
+.access-map iframe{width:100%;flex:1;border:none;min-height:220px;display:block;}
+.access-map-link{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 16px;font-size:12px;color:var(--p1);text-decoration:none;font-family:'Cormorant Garamond',serif;letter-spacing:1px;border-top:1px solid var(--border);background:var(--bg2);transition:background .2s;}
+.access-map-link:hover{background:var(--p4);}
 .access-info{background:white;border:1px solid var(--border);border-radius:22px;padding:28px 30px;box-shadow:var(--shadow);}
 .access-info h3{font-family:'Cinzel Decorative',serif;font-size:10px;letter-spacing:3px;color:var(--p2);margin-bottom:20px;}
 .access-row{display:flex;gap:14px;border-bottom:1px solid var(--border);padding:12px 0;font-size:13px;line-height:1.7;}
@@ -663,18 +649,15 @@ footer{position:relative;z-index:2;border-top:1px solid var(--border);padding:24
   .item-section{padding:0 20px 44px;}
   .photo-gallery{padding:0 20px 44px;grid-template-columns:repeat(2,1fr);}
   .collection{padding:0 20px 44px;grid-template-columns:1fr;}
-  .ig-section,.sns-section{padding:0 20px 44px;}
+  .ig-section{padding:0 20px 44px;}
   .ig-head{flex-direction:column;align-items:flex-start;gap:16px;}
   .ig-follow{width:100%;}
-  .sns-inner{flex-direction:column;align-items:flex-start;}
   .access-section{padding:0 20px 44px;grid-template-columns:1fr;}
   footer{padding:20px;flex-direction:column;align-items:center;text-align:center;}
   .footer-sns{justify-content:center;order:1;}
   .footer-copy{order:2;}
   .hero-cta{width:auto;min-width:180px;padding-left:28px;padding-right:28px;}
   .ig-follow{width:auto;padding-left:24px;padding-right:24px;}
-  .sns-btns{flex-direction:column;align-items:center;}
-  .sns-btn{width:180px;}
   .modal{padding:28px 20px;}
   #back-to-top{bottom:72px;right:20px;width:48px;height:48px;}
   .footer-illust-strip{padding:16px 20px 0;}
@@ -903,30 +886,6 @@ footer{position:relative;z-index:2;border-top:1px solid var(--border);padding:24
 </section>
 
 <!-- DIVIDER -->
-<div class="divider reveal"><div class="div-line"></div><div class="div-label">✦ SNS ✦</div><div class="div-line"></div></div>
-
-<!-- SNS -->
-<section class="sns-section reveal" id="sns-section" data-scroll-section>
-  <div class="sns-inner">
-    <div class="sns-text">日々の情報は、SNSで配信しております。</div>
-    <div class="sns-btns">
-      <a class="sns-btn sb-ameba" href="https://ameblo.jp/tfg1029/" target="_blank" rel="noopener">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="14" height="14" rx="3" stroke="#16a34a" stroke-width="1.5"/><rect x="3.5" y="4" width="9" height="1.5" rx="0.75" fill="#16a34a"/><rect x="3.5" y="7" width="9" height="1.5" rx="0.75" fill="#16a34a"/><rect x="3.5" y="10" width="6" height="1.5" rx="0.75" fill="#16a34a"/></svg>
-        Amebaブログ
-      </a>
-      <a class="sns-btn sb-ig" href="https://www.instagram.com/tfg_kousekino_sumika/" target="_blank" rel="noopener">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1.5" y="1.5" width="13" height="13" rx="4" stroke="#be185d" stroke-width="1.5"/><circle cx="8" cy="8" r="3" stroke="#be185d" stroke-width="1.5"/><circle cx="11.5" cy="4.5" r="1" fill="#be185d"/></svg>
-        Instagram
-      </a>
-      <a class="sns-btn sb-fb" href="https://www.facebook.com/profile.php?id=100013163796296" target="_blank" rel="noopener">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="14" height="14" rx="3" fill="#1d4ed8"/><path d="M9 14V9.5h1.5L10.8 7.5H9V6.5c0-.5.2-1 1-1H11V3.8S10.5 3.7 9.8 3.7c-1.5 0-2.5 1-2.5 2.6V7.5H5.5v2H7.3V14H9z" fill="white"/></svg>
-        Facebook
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- DIVIDER -->
 <div class="divider reveal"><div class="div-line"></div><div class="div-label">✦ Q &amp; A ✦</div><div class="div-line"></div></div>
 
 <!-- Q&A -->
@@ -1032,6 +991,10 @@ footer{position:relative;z-index:2;border-top:1px solid var(--border);padding:24
     <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3243.5!2d138.6178339!3d35.2391776!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x601bd115eab8e0a9%3A0x38fa004e857a833d!2z6Y6u55Sj44Gu44GZ44G_44GL!5e0!3m2!1sja!2sjp!4v1700000000003&output=embed"
       allowfullscreen="" loading="lazy" title="鉱石のすみか 地図" referrerpolicy="no-referrer-when-downgrade">
     </iframe>
+    <a class="access-map-link" href="https://maps.google.com/?q=鉱石のすみか+静岡県富士宮市三園平1692-1" target="_blank" rel="noopener">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 1C5.24 1 3 3.24 3 6c0 3.75 5 9 5 9s5-5.25 5-9c0-2.76-2.24-5-5-5zm0 6.75A1.75 1.75 0 1 1 8 4.25a1.75 1.75 0 0 1 0 3.5z" fill="currentColor"/></svg>
+      Googleマップで開く ›
+    </a>
   </div>
   <div class="access-info">
     <h3>Store Information ✦ 店舗情報</h3>
@@ -1108,7 +1071,7 @@ let isLoading = true;
 const GAS_URL = "https://script.google.com/macros/s/AKfycbziitAbrKunsAbSAjDmxc0m42P2hncwTAvlfG0i0NJY8dLh2oj3qo6wLYs60HnAECro/exec";
 
 const DEFAULT_NEWS = [
-  { banner:"", badge:"badge-info",    date:"", allowHtml:true, text:'日々の情報は、SNSで配信しております。よろしければ<a href="#sns-section" style="color:var(--p1);text-decoration:underline;text-underline-offset:3px;">SNS</a>をご覧ください。' },
+  { banner:"", badge:"badge-info",    date:"", text:'日々の情報は、InstagramやAmebaブログで配信しております。' },
   { banner:"", badge:"badge-holiday", date:"", text:"毎週木曜日は定休日です。金曜日より通常通り営業しております。" }
 ];
 
@@ -1214,8 +1177,9 @@ function showAllNews(targetIdx) {
 function newsItemHTML(item, idx) {
   const title   = item.title ? esc(item.title) : "";
   const hasText = !!(item.text && String(item.text).trim());
+  // \n を <br> に変換して改行を反映（スプレッドシートのセル内改行対応）
   const text    = hasText
-    ? (item.allowHtml ? item.text : esc(item.text))
+    ? (item.allowHtml ? item.text : esc(item.text).replace(/\n/g, "<br>"))
     : "";
 
   // タイトル表示（URLがあればリンク付き）
@@ -1340,16 +1304,23 @@ function renderHeroBanner(bannerItems) {
   _showBannerItem(0);
 
   // プログレスバー＋自動切り替え（複数件のみ）
-  if (_bannerRaf) cancelAnimationFrame(_bannerRaf);
+  if (_bannerRaf) { cancelAnimationFrame(_bannerRaf); _bannerRaf = null; }
   if (multi) {
     _bannerStart = performance.now();
+    let _advancing = false; // pct>=100 の多重実行防止フラグ
     (function tick(now) {
       const elapsed = now - _bannerStart;
       const pct = Math.min(elapsed / BANNER_INTERVAL * 100, 100);
       if (progBar) progBar.style.width = pct + "%";
-      if (pct >= 100) {
+      if (pct >= 100 && !_advancing) {
+        _advancing = true;
         _bannerIndex = (_bannerIndex + 1) % _bannerItems.length;
         _showBannerItem(_bannerIndex);
+        // _showBannerItem内のsetTimeout(180ms)完了後にリセット
+        setTimeout(() => {
+          _bannerStart = performance.now();
+          _advancing = false;
+        }, 200);
       }
       _bannerRaf = requestAnimationFrame(tick);
     })(performance.now());
@@ -1415,25 +1386,8 @@ function updateScrollMargins() {
   });
 }
 
-/* スクロールアニメーション */
-const revealObserver = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.classList.add("visible");
-      revealObserver.unobserve(e.target);
-    }
-  });
-}, { threshold: 0, rootMargin: "0px 0px 0px 0px" });
-document.querySelectorAll(".reveal").forEach(el => revealObserver.observe(el));
-
-/* ページ読み込み直後に全 reveal を visible にする（フォールバック） */
-window.addEventListener("load", () => {
-  document.querySelectorAll(".reveal").forEach(el => el.classList.add("visible"));
-});
-/* 0.8秒後にも念のため */
-setTimeout(() => {
-  document.querySelectorAll(".reveal").forEach(el => el.classList.add("visible"));
-}, 800);
+/* スクロールアニメーション（reveal）は現在無効化中。将来復活させる場合は
+   .reveal の初期値を opacity:0; transform:translateY(16px); に変更してから使用すること */
 
 window.addEventListener("scroll", () => {
   document.getElementById("main-nav").classList.toggle("scrolled", scrollY > 30);
