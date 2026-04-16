@@ -19,7 +19,7 @@
     })(window, document, "clarity", "script", "waj1iaac0q");
 </script>
 <meta name="robots" content="noindex,nofollow">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>鉱石のすみか｜富士宮市のパワーストーン・鉱石専門店</title>
 <meta name="description" content="富士宮市のパワーストーン・鉱石専門店。ブレスレット・原石・アクセサリーを取り揃え、あなたにぴったりの石をご提案します。KSKスクエアビル1F、営業10:00〜18:00、木曜定休。">
 
@@ -156,7 +156,8 @@ body { background:var(--bg2); color:var(--text); font-family:'Noto Serif JP',ser
 
 
 /* hamburger */
-.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px;}
+/* display:none のみに整理。flex-direction はスマホ用メディアクエリ内で定義する */
+.hamburger{display:none;cursor:pointer;background:none;border:none;padding:4px;}
 .hamburger span{display:block;width:24px;height:1.5px;background:var(--p1);border-radius:2px;transition:all .3s;}
 .hamburger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg);}
 .hamburger.open span:nth-child(2){opacity:0;}
@@ -648,9 +649,86 @@ footer{position:relative;z-index:2;border-top:1px solid var(--border);padding:24
 .btn-danger{padding:10px 20px;border-radius:20px;background:#fce7f3;border:none;color:#be185d;cursor:pointer;font-size:13px;font-family:'Noto Serif JP',serif;transition:background .2s;}
 .btn-danger:hover{background:#fbcfe8;}
 
+/* ============================================================  ボトムナビ（スマホ専用）  */
+.bottom-nav {
+  display: none; /* PC時は非表示 */
+}
+
+@media(max-width:900px){
+  /* ボトムナビ本体 */
+  .bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 200;
+    /* サイトのオーロラ背景と統一感を出す薄紫半透明 */
+    background: rgba(237,233,254,0.96);
+    backdrop-filter: blur(16px);
+    /* 上部に紫グラデーションの細いライン */
+    border-top: 1.5px solid rgba(139,92,246,0.35);
+    /* iPhoneホームバー（セーフエリア）分だけ高さを拡張 */
+    height: calc(62px + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+    align-items: stretch;
+    box-shadow: 0 -4px 24px rgba(139,92,246,0.13);
+  }
+  /* ボトムナビ各アイテム */
+  .bottom-nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    text-decoration: none;
+    /* 通常時：サイトの中間色（紫寄り） */
+    color: var(--mid);
+    font-family: 'Noto Serif JP', serif;
+    font-size: 9px;
+    letter-spacing: 0.5px;
+    padding: 6px 2px;
+    transition: color 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+  }
+  /* タップ時 */
+  .bottom-nav-item:active { color: var(--p1); }
+  /* 絵文字アイコン */
+  .bottom-nav-icon {
+    font-size: 17px;
+    line-height: 1;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+  /* アクティブ時：金色 */
+  .bottom-nav-item.active { color: var(--gold); }
+  .bottom-nav-item.active .bottom-nav-icon { opacity: 1; }
+  /* アクティブ時：上部に金色インジケーターライン */
+  .bottom-nav-item.active::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 20%; right: 20%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold2), transparent);
+    border-radius: 0 0 2px 2px;
+  }
+  /* InstagramのSVGアイコン専用ラッパー */
+  .bottom-nav-ig-icon {
+    width: 20px;
+    height: 20px;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+  .bottom-nav-item.active .bottom-nav-ig-icon { opacity: 1; }
+}
+
 /* ============================================================  RESPONSIVE  */
 @media(max-width:900px){
-  .nav{padding:0 20px;} .nav-links{display:none;} .hamburger{display:flex;}
+  .nav{padding:0 20px;} .nav-links{display:none;}
+  /* スマホ時はハンバーガーを非表示（ボトムナビに一本化） */
+  .hamburger{display:none;}
+  /* スマホ時はドロワーメニューも非表示 */
+  .mobile-menu{display:none !important;}
   .hero{min-height:80vh;}
   .hero-overlay-text{width:100%;padding:0 24px;}
   .news-section{padding:40px 20px 0;}
@@ -669,13 +747,15 @@ footer{position:relative;z-index:2;border-top:1px solid var(--border);padding:24
   .ig-head{flex-direction:column;align-items:flex-start;gap:16px;}
   .ig-follow{width:100%;}
   .access-section{padding:0 20px 44px;grid-template-columns:1fr;}
-  footer{padding:20px;flex-direction:column;align-items:center;text-align:center;}
+  /* フッターにボトムナビ分の余白を追加（隠れ防止）＋セーフエリア対応 */
+  footer{padding:20px 20px calc(80px + env(safe-area-inset-bottom));flex-direction:column;align-items:center;text-align:center;}
   .footer-sns{justify-content:center;order:1;}
   .footer-copy{order:2;}
   .hero-cta{width:auto;min-width:180px;padding-left:28px;padding-right:28px;}
   .ig-follow{width:auto;padding-left:24px;padding-right:24px;}
   .modal{padding:28px 20px;}
-  #back-to-top{bottom:72px;right:20px;width:48px;height:48px;}
+  /* back-to-topをボトムナビの上に配置（セーフエリア対応） */
+  #back-to-top{bottom:calc(72px + env(safe-area-inset-bottom));right:20px;width:48px;height:48px;}
   .footer-illust-strip{padding:16px 20px 0;}
 }
 </style>
@@ -1082,6 +1162,43 @@ footer{position:relative;z-index:2;border-top:1px solid var(--border);padding:24
   </div>
   <span class="footer-copy">© 2026 鉱石のすみか</span>
 </footer>
+
+<!-- ボトムナビ（スマホ専用） -->
+<nav class="bottom-nav" id="bottom-nav" aria-label="ボトムナビゲーション">
+  <a class="bottom-nav-item" href="#news-section" data-section="news-section">
+    <span class="bottom-nav-icon">📢</span>
+    <span>お知らせ</span>
+  </a>
+  <a class="bottom-nav-item" href="#item-section" data-section="item-section">
+    <span class="bottom-nav-icon">💎</span>
+    <span>商品一例</span>
+  </a>
+  <a class="bottom-nav-item" href="#qna-section" data-section="qna-section">
+    <span class="bottom-nav-icon">💬</span>
+    <span>Q&amp;A</span>
+  </a>
+  <!-- Instagram：公式ロゴ風SVGアイコン（紫〜ピンク系グラデーション） -->
+  <a class="bottom-nav-item" href="#ig-section" data-section="ig-section">
+    <svg class="bottom-nav-ig-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <!-- 通常時：紫〜ピンク系（サイトの --p1 〜 --rose） -->
+        <linearGradient id="ig-bn-grad" x1="0%" y1="100%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#d97706"/>
+          <stop offset="40%" stop-color="#8b5cf6"/>
+          <stop offset="100%" stop-color="#f472b6"/>
+        </linearGradient>
+      </defs>
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke="url(#ig-bn-grad)" stroke-width="2"/>
+      <circle cx="12" cy="12" r="4.5" stroke="url(#ig-bn-grad)" stroke-width="2"/>
+      <circle cx="17.5" cy="6.5" r="1.2" fill="#8b5cf6"/>
+    </svg>
+    <span>Instagram</span>
+  </a>
+  <a class="bottom-nav-item" href="#access-section" data-section="access-section">
+    <span class="bottom-nav-icon">📍</span>
+    <span>アクセス</span>
+  </a>
+</nav>
 
 <!-- トップへ戻るボタン -->
 <button id="back-to-top" aria-label="ページトップへ戻る" onclick="window.scrollTo({top:0,behavior:'smooth'})">
@@ -1601,6 +1718,42 @@ function toggleQna(btn) {
     btn.setAttribute("aria-expanded","true");
   }
 }
+
+/* ================================================================
+   ボトムナビ：スクロール位置に応じてアクティブ状態を更新
+   ================================================================ */
+(function() {
+  const bnItems = document.querySelectorAll('.bottom-nav-item');
+  // 対応セクションのIDリスト（ボトムナビと同順）
+  const sectionIds = ['news-section', 'item-section', 'qna-section', 'ig-section', 'access-section'];
+
+  function updateBottomNav() {
+    // 現在のスクロール位置＋画面の1/3を「注目点」とする
+    const scrollY = window.scrollY + window.innerHeight / 3;
+    let activeId = sectionIds[0]; // デフォルトは最初のセクション
+
+    sectionIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.offsetTop <= scrollY) {
+        activeId = id;
+      }
+    });
+
+    // アクティブクラスを付与・除去
+    bnItems.forEach(item => {
+      if (item.dataset.section === activeId) {
+        item.classList.add('active');
+      } else {
+        item.classList.remove('active');
+      }
+    });
+  }
+
+  // スクロールイベントに登録（passive:trueでスクロール性能を維持）
+  window.addEventListener('scroll', updateBottomNav, { passive: true });
+  // 初回実行
+  updateBottomNav();
+})();
 
 /* ---------- 初期化 ---------- */
 renderNewsList();
