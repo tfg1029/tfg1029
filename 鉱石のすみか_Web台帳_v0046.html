@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>鉱石のすみか　Webサイト管理資料 v0045</title>
+<title>鉱石のすみか　Webサイト管理資料 v0046</title>
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
@@ -113,7 +113,7 @@ tr:hover td { background: #f5f3ff; }
 
   <div class="doc-header">
     <div class="doc-title">鉱石のすみか　Webサイト管理資料</div>
-    <div class="doc-subtitle">改修履歴・制作ルール・GASコード・次回タスク　／　2026年4月18日 更新（v0045）</div>
+    <div class="doc-subtitle">改修履歴・制作ルール・GASコード・次回タスク　／　2026年4月18日 更新（v0046）</div>
   </div>
 
   <!-- 固定ナビゲーション -->
@@ -347,7 +347,7 @@ tr:hover td { background: #f5f3ff; }
           <li>正式ライン：0125, 0126…（四桁）で連番管理。現行公開サイトの継続改修に使用</li>
           <li>ベータライン：b0001, b0002…（四桁）で管理。新デザイン・新構成の実験に使用。完成・承認されたら正式ラインに移行（目安2〜3ヶ月）</li>
           <li>変更のたびに新しい番号で保存</li>
-          <li>管理資料ファイル名：鉱石のすみかWeb管理資料_v####.html（例：v0043→v0044）※四桁</li>
+          <li>管理資料ファイル名：鉱石のすみかWeb管理資料_v####.html（例：v0044→v0045）※四桁</li>
         </ul>
       </li>
       <li>進め方
@@ -711,6 +711,7 @@ function testFormatDateColumn() {
     <table>
       <thead><tr><th class="ver-col">バージョン</th><th>改修内容</th></tr></thead>
       <tbody>
+        <tr><td class="ver-col">index125</td><td>SnapWidget表示修正：iframeのCSSをpadding-bottomトリック（縦横比1:1）に変更。PC・スマホ問わず3×3グリッドが完全に表示されるよう対応。SnapWidget設定：Responsive:Yes・Thumbnail Size:150px</td></tr>
         <tr><td class="ver-col">index124</td><td>全バッジの枠線を1px→0.5pxに統一（臨時休業含む）</td></tr>
         <tr><td class="ver-col">index123</td><td>全バッジに枠線追加（臨時休業：0.5px赤枠、他：同色系25%透明の薄枠）。臨時休業の左太線（border-left:3px solid #be123c）を削除</td></tr>
         <tr><td class="ver-col">index122</td><td>ボトムナビのiPhone/Safari表示修正：①viewport-fit=coverを追加　②ボトムナビにenv(safe-area-inset-bottom)を追加（height・padding-bottom）　③back-to-top・フッターのpadding-bottomをセーフエリア対応　④hamburger CSSからflex-directionを分離（display:noneとの共存によるブラウザ解釈ズレを解消）</td></tr>

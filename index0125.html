@@ -436,17 +436,25 @@ body { background:var(--bg2); color:var(--text); font-family:'Noto Serif JP',ser
 .ig-follow{background:linear-gradient(135deg,var(--p1),#7c3aed);color:white;border:none;font-family:'Cormorant Garamond',serif;font-size:12px;letter-spacing:2px;padding:10px 0;border-radius:20px;cursor:pointer;text-decoration:none;box-shadow:0 4px 12px rgba(139,92,246,.3);transition:transform .2s,box-shadow .2s;display:inline-flex;align-items:center;justify-content:center;width:200px;}
 .ig-follow:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(139,92,246,.4);}
 
-/* SnapWidget 埋め込みエリア */
-.snapwidget-area{border-radius:14px;overflow:visible;width:100%;position:relative;}
-.snapwidget-area iframe{
-  display:block;
+/* SnapWidget 埋め込みエリア：縦横比1:1で自動追従（PC・スマホ共通） */
+.snapwidget-area{
+  position:relative;
   width:100%;
-  height:720px;
+  padding-bottom:100%; /* 縦横比1:1を維持 */
+  height:0;
+  overflow:hidden;
+  border-radius:14px;
+}
+.snapwidget-area iframe{
+  position:absolute;
+  top:0; left:0;
+  width:100%;
+  height:100%;
   border:none;
   border-radius:14px;
 }
 @media(max-width:600px){
-  .snapwidget-area iframe{ height:360px; }
+  /* スマホはpadding-bottomトリックで自動対応のため追加指定不要 */
 }
 
 /* ============================================================  SNS  */
